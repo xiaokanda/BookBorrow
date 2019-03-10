@@ -6,12 +6,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Date;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -24,6 +26,9 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import top.vist.bookborrow.dao.BookDao;
+import top.vist.bookborrow.dao.BookTypeDao;
+import top.vist.bookborrow.entity.Book;
 
 /*
  * 图书信息添加
@@ -35,8 +40,7 @@ public class BookAdd extends JFrame implements ActionListener, FocusListener {
 	private ButtonGroup buttonGroup = new ButtonGroup();
 	// private JRadioButton JRB1,JRB2;
 	private JLabel ISBNJL, lbieJL, bknJL, wrtnJL, cbsnJL, dateJL, numJL, vlJL;
-	private JTextField ISBNJT, lbieJT, bknJT, wrtnJT, cbsnJT, dateJT, numJT,
-			vlJT;
+	private JTextField ISBNJT, lbieJT, bknJT, wrtnJT, cbsnJT, dateJT, numJT, vlJT;
 	// private JComboBox readertypeJCB;
 	private JComboBox lbieJCB;
 	private JButton addJB, resetJB, closeJB;
@@ -70,7 +74,8 @@ public class BookAdd extends JFrame implements ActionListener, FocusListener {
 		lbieJCB = new JComboBox();
 		bookAddJP.add(lbieJCB);
 		List<String> data = new ArrayList<String>();
-		//data = BookDao.getBookType();
+		BookTypeDao bookTypeDao = new BookTypeDao();
+		data = bookTypeDao.findNameAll();
 		Iterator<String> it = data.iterator();
 		while (it.hasNext()) {
 			lbieJCB.addItem(it.next());
@@ -129,8 +134,6 @@ public class BookAdd extends JFrame implements ActionListener, FocusListener {
 		setResizable(false);// 取消最大化
 	}
 
-	
-
 	@Override
 	public void focusGained(FocusEvent e) {
 
@@ -144,51 +147,68 @@ public class BookAdd extends JFrame implements ActionListener, FocusListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == addJB) {
-
-			/*Book book = new Book();
+			Book book = new Book();
 			book.setISBN(ISBNJT.getText());
-
 			String typename = (String) lbieJCB.getSelectedItem();
-			
-			int bookTypeId= getBookTypeId(typename);
-			book.setTypeid(bookTypeId);
+			BookTypeDao bookTypeDao = new BookTypeDao();
+			book.setTypeId(bookTypeDao.findIdByName(typename));
 			book.setBookName(bknJT.getText());
 			book.setAuthor(wrtnJT.getText());
 			book.setPublish(cbsnJT.getText());
-			//System.out.println(Date.valueOf(dateJT.getText()));
-			book.setStrPublishDate(dateJT.getText());
-			
-			book.setPublishtime(Integer.parseInt(numJT.getText()));
+			String strDate = dateJT.getText();
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+			try {
+				Date parse = format.parse(strDate);
+				book.setPublishDate(parse);
+				strDate = format.format(parse);
+			} catch (ParseException e1) {
+				JOptionPane.showMessageDialog(this, "输入日期不合法：yyyy-MM-dd");
+			}
+			book.setStrPublishDate(strDate);
+			book.setPublishNum(Integer.parseInt(numJT.getText()));
 			book.setUnitprice(Float.valueOf(vlJT.getText()));
-
-			int r = BookDao.insertBook(book);
+			BookDao bookDao = new BookDao();
+			int r = bookDao.save(book);
 			if (r == 1) {
 				JOptionPane.showMessageDialog(this, "图书添加成功");
 			} else {
 				JOptionPane.showMessageDialog(this, "图书添加失败");
-			}*/
+			}
+			/*
+			 * Book book = new Boo(); book.setISBN(ISBNJT.getText());
+			 * 
+			 * String typename = (String) lbieJCB.getSelectedItem();
+			 * 
+			 * int bookTypeId= getBookTypeId(typename); book.setTypeid(bookTypeId);
+			 * book.setBookName(bknJT.getText()); book.setAuthor(wrtnJT.getText());
+			 * book.setPublish(cbsnJT.getText());
+			 * //System.out.println(Date.valueOf(dateJT.getText()));
+			 * book.setStrPublishDate(dateJT.getText());
+			 * 
+			 * book.setPublishtime(Integer.parseInt(numJT.getText()));
+			 * book.setUnitprice(Float.valueOf(vlJT.getText()));
+			 * 
+			 * int r = BookDao.insertBook(book); if (r == 1) {
+			 * JOptionPane.showMessageDialog(this, "图书添加成功"); } else {
+			 * JOptionPane.showMessageDialog(this, "图书添加失败"); }
+			 */
 		}
 		if (e.getSource() == ISBNJT) {
 			JOptionPane.showMessageDialog(this, "输入完成！");
 		}
-		if(e.getSource()==closeJB){
+		if (e.getSource() == closeJB) {
 			dispose();
 		}
 
 	}
 
 	public int getBookTypeId(String typename) {
-		/*String sql = "select id from booktype where typename=?";
-		ResultSet rs = Dao.executeQuery(sql, typename);
-		int a = 0;
-		try {
-			if (rs.next()) {
-				a = rs.getInt("id");
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return a;*/
+		/*
+		 * String sql = "select id from booktype where typename=?"; ResultSet rs =
+		 * Dao.executeQuery(sql, typename); int a = 0; try { if (rs.next()) { a =
+		 * rs.getInt("id"); } } catch (SQLException e) { e.printStackTrace(); } return
+		 * a;
+		 */
 		return 0;
 	}
 

@@ -168,7 +168,7 @@ public class ReaderAdd extends JFrame implements ActionListener, FocusListener {
 		String typename = (String) readertypeJCB.getSelectedItem();
 		ReaderTypeDao readerTypeDao = new ReaderTypeDao();
 		// 查询typeId
-		int typeId = readerTypeDao.getReaderTypeId(typename);
+		int typeId = readerTypeDao.findIdByName(typename);
 		reader.setType(typeId);
 		reader.setName(readerNameJTF.getText());
 		String sex = "";

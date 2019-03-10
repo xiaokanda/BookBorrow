@@ -43,7 +43,7 @@ public class Library extends JFrame {
 		menuitem12.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// new ReaderSelectandModify();
+				new ReaderSelectAndModify();
 			}
 		});
 		menu2 = new JMenu("图书信息管理");
@@ -61,7 +61,7 @@ public class Library extends JFrame {
 		menuitem22.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// new BookSelectandUpdate();
+				 new BookSelectAndUpdate();
 			}
 		});
 		menu3 = new JMenu("图书借阅管理");
@@ -89,7 +89,7 @@ public class Library extends JFrame {
 		menuitem41.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// new BookTypeManage();
+				new BookTypeManage();
 			}
 		});
 		menuitem42 = new JMenuItem("读者类型管理");
@@ -97,7 +97,7 @@ public class Library extends JFrame {
 		menuitem42.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// new ReaderTypeManage();
+				new ReaderTypeManage();
 			}
 		});
 		menuitem43 = new JMenuItem("罚金设置");
