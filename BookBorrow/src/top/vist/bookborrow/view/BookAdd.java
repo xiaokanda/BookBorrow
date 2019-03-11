@@ -165,8 +165,13 @@ public class BookAdd extends JFrame implements ActionListener, FocusListener {
 				JOptionPane.showMessageDialog(this, "输入日期不合法：yyyy-MM-dd");
 			}
 			book.setStrPublishDate(strDate);
-			book.setPublishNum(Integer.parseInt(numJT.getText()));
-			book.setUnitprice(Float.valueOf(vlJT.getText()));
+			try {
+				book.setPublishNum(Integer.parseInt(numJT.getText()));
+				book.setUnitprice(Float.valueOf(vlJT.getText()));
+			} catch (NumberFormatException e1) {
+				JOptionPane.showMessageDialog(this, "最后两项请输入数字");
+				e1.printStackTrace();
+			}
 			BookDao bookDao = new BookDao();
 			int r = bookDao.save(book);
 			if (r == 1) {
