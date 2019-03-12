@@ -251,4 +251,28 @@ public class ReaderDao {
 		}
 		return list;
 	}
+
+	public int update(Reader reader) {
+		String sql = "update reader set type = ?,name = ?, age = ? ,sex = ?,phone = ?,dept = ? where readerid = ?";
+		int row = 0;
+		try {
+			conn = JDBCUtils.getConnection();
+			st = conn.prepareStatement(sql);
+			
+			st.setInt(1, reader.getType());
+			st.setString(2, reader.getName());
+			st.setInt(3, reader.getAge());
+			st.setString(4, reader.getSex());
+			st.setString(5, reader.getPhone());
+			st.setString(6, reader.getDapt());
+			st.setString(7, reader.getReaderId());
+			
+			row = st.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBCUtils.colseAll(conn, st, rs);
+		}
+		return row;
+	}
 }

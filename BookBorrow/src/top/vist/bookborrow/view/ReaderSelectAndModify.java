@@ -181,7 +181,7 @@ public class ReaderSelectAndModify extends JFrame implements MouseListener, Acti
 		updateJB.addActionListener(this);
 		closeJB.addActionListener(this);
 		deleteJB.addActionListener(this);
-
+		selectJB.addActionListener(this);
 		this.add(selectJP, BorderLayout.NORTH);
 		this.add(updateJP, BorderLayout.CENTER);
 		this.add(buttonJP, BorderLayout.SOUTH);
@@ -195,8 +195,8 @@ public class ReaderSelectAndModify extends JFrame implements MouseListener, Acti
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		ReaderDao readerDao = new ReaderDao();
 		if (e.getSource() == deleteJB) {
-			ReaderDao readerDao = new ReaderDao();
 			String readerId = IDJTF.getText();
 			if (readerId == null || "".equals(readerId)) {
 				JOptionPane.showMessageDialog(this, "请选中你需要删除的读者！");
@@ -218,10 +218,50 @@ public class ReaderSelectAndModify extends JFrame implements MouseListener, Acti
 			dispose();
 		}
 		if (e.getSource() == updateJB) {
-
+			Reader reader = new Reader();
+			reader.setReaderId(IDJTF.getText());
+			if (reader.getReaderId() == null || "".equals(reader.getReaderId())) {
+				JOptionPane.showMessageDialog(this, "编号不能为空！");
+				return;
+			}
+			// 读者类型编号获取过程
+			String typename = (String) readertypeJCB.getSelectedItem();
+			ReaderTypeDao readerTypeDao = new ReaderTypeDao();
+			// 查询typeId
+			int typeId = readerTypeDao.findIdByName(typename);
+			reader.setType(typeId);
+			reader.setName(readerNameJTF.getText());
+			String sex = "";
+			if (JRB1.isSelected()) {
+				sex = JRB1.getText();
+			} else {
+				sex = JRB2.getText();
+			}
+			reader.setSex(sex);
+			int age = 0;
+			try {
+				Integer.valueOf(ageJTF.getText());
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(this, "请输入正确的年龄！");
+				return;
+			}
+			reader.setAge(age);
+			reader.setPhone(phoneJTF.getText());
+			reader.setDapt(deptJTF.getText());
+			int row = readerDao.update(reader);
+			if (row == 1) {
+				results = readerDao.getArrayData(readerDao.findAll());
+				jtable = new JTable(results, readersearch);
+				jtable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+				jscrollPane.setViewportView(jtable);
+				JOptionPane.showMessageDialog(this, "修改成功！");
+			} else {
+				JOptionPane.showMessageDialog(this, "修改失败!");
+			}
 		}
 		if (e.getSource() == selectJB) {
-			ReaderDao readerDao = new ReaderDao();
+			// System.out.println("查询按钮被点击");
+			// ReaderDao readerDao = new ReaderDao();
 			String type = (String) conditionJCB.getSelectedItem();
 			String str = select_conditionJTF.getText().intern();
 			if (str == null || str.length() == 0) {
@@ -265,7 +305,7 @@ public class ReaderSelectAndModify extends JFrame implements MouseListener, Acti
 			}
 			ageJTF.setText(results[row][3]);
 			phoneJTF.setText(results[row][5]);
-			deptJL.setText(results[row][6]);
+			deptJTF.setText(results[row][6]);
 			regJTF.setText(results[row][7]);
 		}
 
