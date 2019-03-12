@@ -84,8 +84,6 @@ public class ReaderAdd extends JFrame implements ActionListener, FocusListener {
 		while (it.hasNext()) {
 			readertypeJCB.addItem(it.next());
 		}
-		// readertypeJCB.addItem("学生");
-		// readertypeJCB.addItem("教师");
 
 		sexJL = new JLabel("性别：");
 		sexJL.setHorizontalAlignment(SwingConstants.CENTER);
@@ -133,6 +131,7 @@ public class ReaderAdd extends JFrame implements ActionListener, FocusListener {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 		String str = format.format(new java.util.Date());
 		regtimeJTF.setText(str);
+		regtimeJTF.setEditable(false);
 		readerAddJP.add(regtimeJTF);
 
 		// 登录取消按钮面板设计

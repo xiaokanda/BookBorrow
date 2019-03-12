@@ -140,7 +140,8 @@ public class ReaderTypeDao {
 
 		return 0;
 	}
-	//修改读者类别
+
+	// 修改读者类别
 	public int update(ReaderType readerType) {
 		String sql = "update readertype set typename = ?, maxborrownum = ?, `limit`= ? where id = ?";
 		try {
@@ -178,6 +179,26 @@ public class ReaderTypeDao {
 			JDBCUtils.colseAll(conn, st, rs);
 		}
 		return 0;
+	}
+
+	public String getNameById(Integer type) {
+		String sql = "select typename from readertype where id= ?";
+		String typeName = null;
+		try {
+			conn = JDBCUtils.getConnection();
+			st = conn.prepareStatement(sql);
+			st.setInt(1, type);
+			rs = st.executeQuery();
+			if(rs.next()) {
+				typeName = rs.getString(1);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}finally {
+			JDBCUtils.colseAll(conn, st, rs);
+		}
+		return typeName;
 	}
 
 }

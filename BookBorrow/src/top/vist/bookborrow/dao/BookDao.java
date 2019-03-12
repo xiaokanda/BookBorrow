@@ -258,4 +258,21 @@ public class BookDao {
 		return 0;
 	}
 
+	public int delete(String isbn) {
+		String sql = "delete from book where isbn = ?";
+		try {
+			conn = JDBCUtils.getConnection();
+			st = conn.prepareStatement(sql);
+			st.setString(1, isbn);
+			int row = st.executeUpdate();
+			if (row == 1)
+				return 1;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBCUtils.colseAll(conn, st, rs);
+		}
+		return 0;
+	}
+
 }

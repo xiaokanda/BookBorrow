@@ -39,7 +39,7 @@ public class BookSelectAndUpdate extends JFrame implements ActionListener, Focus
 	private JComboBox JComboBox;
 	private JScrollPane jscrollPane;
 	private JTable jtable;
-	private JButton button1, button2;
+	private JButton button1, button2, deleteJB;
 
 	private JTextField ISBNJT, lbieJT, bknJT, wrtnJT, cbsnJT, dateJT, numJT, vlJT;
 	private JLabel ISBNJL, lbieJL, bknJL, wrtnJL, cbsnJL, dateJL, numJL, vlJL;
@@ -87,9 +87,10 @@ public class BookSelectAndUpdate extends JFrame implements ActionListener, Focus
 		buttonPanel = new JPanel();
 		button1 = new JButton("查询");
 		button2 = new JButton("退出");
+		deleteJB = new JButton("删除");
 		buttonPanel.add(button1);
+		buttonPanel.add(deleteJB);
 		buttonPanel.add(button2);
-
 		selectPanel.add(buttonPanel, BorderLayout.SOUTH);
 
 		updatgePanel.setLayout(new BorderLayout());
@@ -155,6 +156,7 @@ public class BookSelectAndUpdate extends JFrame implements ActionListener, Focus
 		buttonPanel1 = new JPanel();
 		moJB = new JButton("修改");
 		closeJB = new JButton("关闭");
+
 		buttonPanel1.add(moJB);
 		buttonPanel1.add(closeJB);
 
@@ -163,6 +165,7 @@ public class BookSelectAndUpdate extends JFrame implements ActionListener, Focus
 
 		button1.addActionListener(this);
 		button2.addActionListener(this);
+		deleteJB.addActionListener(this);
 		ISBNJT.addFocusListener(this);
 		moJB.addActionListener(this);
 		closeJB.addActionListener(this);
@@ -179,6 +182,10 @@ public class BookSelectAndUpdate extends JFrame implements ActionListener, Focus
 			BookTypeDao bookTypeDao = new BookTypeDao();
 			Book book = new Book();
 			book.setISBN(ISBNJT.getText());
+			if (book.getISBN() == null || "".equals(book.getISBN())) {
+				JOptionPane.showMessageDialog(this, "ISBN不能为空！");
+				return ;
+			}
 			book.setTypeId(bookTypeDao.findIdByName((String) lbieJCB.getSelectedItem()));
 			book.setAuthor(wrtnJT.getText());
 			book.setPublish(cbsnJT.getText());
@@ -215,25 +222,45 @@ public class BookSelectAndUpdate extends JFrame implements ActionListener, Focus
 			BookDao bookDao = new BookDao();
 			String type = (String) JComboBox.getSelectedItem();
 			String str = chaxunJTF.getText();
-			if (str.length() == 0) {
+			if (str==null||str.length() == 0) {
 				results = bookDao.getArrayData(bookDao.findAll());
 			} else {
 				if (type.equals("ISBN")) {
-					results = bookDao.getArrayData(bookDao.findBooksByISBN(chaxunJTF.getText().intern()));
+					results = bookDao.getArrayData(bookDao.findBooksByISBN(str.intern()));
 				}
 				if (type.equals("类型")) {
-					results = bookDao.getArrayData(bookDao.findBooksByType(chaxunJTF.getText().intern()));
+					results = bookDao.getArrayData(bookDao.findBooksByType(str.intern()));
 				}
 				if (type.equals("名称")) {
-					results = bookDao.getArrayData(bookDao.findBooksByName(chaxunJTF.getText().intern()));
+					results = bookDao.getArrayData(bookDao.findBooksByName(str.intern()));
 				}
 				if (type.equals("作者")) {
-					results = bookDao.getArrayData(bookDao.findBooksByAuthor(chaxunJTF.getText().intern()));
+					results = bookDao.getArrayData(bookDao.findBooksByAuthor(str.intern()));
 				}
 			}
 			jtable = new JTable(results, readersearch);
 			jtable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			jscrollPane.setViewportView(jtable);
+		}
+		// 删除选中行的图书
+		if (e.getSource() == deleteJB) {
+			int row = jtable.getSelectedRow();
+			// System.out.println(row);
+			String ISBN = results[row][0];
+			System.out.println(ISBN);
+			BookDao bookDao = new BookDao();
+			row = bookDao.delete(ISBN);
+			if (row == 1) {
+				results = bookDao.getArrayData(bookDao.findAll());
+				jtable = new JTable(results, readersearch);
+				jtable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+				jscrollPane.setViewportView(jtable);
+
+				JOptionPane.showMessageDialog(this, "删除成功!");
+			} else {
+				JOptionPane.showMessageDialog(this, "删除失败!");
+			}
+
 		}
 	}
 
@@ -245,11 +272,11 @@ public class BookSelectAndUpdate extends JFrame implements ActionListener, Focus
 	@Override
 	public void focusLost(FocusEvent e) {
 		if (e.getSource() == ISBNJT) {
-			// JOptionPane.showMessageDialog(this, "失去焦点");
 			BookDao bookDao = new BookDao();
 			Book book = new Book();
 			book = bookDao.findBookByISBN(ISBNJT.getText());
 			if (book == null) {
+				ISBNJT.setText(null);
 				JOptionPane.showMessageDialog(this, "查无此书");
 				return;
 			}
