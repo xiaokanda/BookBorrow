@@ -16,6 +16,9 @@ public class BookTypeDao {
 	private PreparedStatement st = null;
 	private ResultSet rs = null;
 
+	/**
+	 * 查询所有书籍类型名
+	 */
 	public List<String> findNameAll() {
 		List<String> list = new ArrayList<>();
 		String sql = "select typename from booktype";
@@ -34,7 +37,9 @@ public class BookTypeDao {
 		return list;
 	}
 
-	// 查询所有书本类型
+	/**
+	 * 查询所有书本类型
+	 */
 	public List<BookType> findAll() {
 		List<BookType> list = new ArrayList<>();
 		BookType bookType = null;
@@ -57,7 +62,9 @@ public class BookTypeDao {
 		return list;
 	}
 
-	// 讲list集合转成数组
+	/**
+	 * 将list集合转成数组
+	 */
 	public String[][] getArrayData(List<BookType> bookType) {
 		String[][] data = new String[bookType.size()][2];
 		for (int i = 0; i < bookType.size(); i++) {
@@ -87,7 +94,9 @@ public class BookTypeDao {
 		return 0;
 	}
 
-	// 条件查询
+	/**
+	 * 根据类型名查询书籍类型
+	 */
 	public List<BookType> search(String typeName) {
 		List<BookType> list = new ArrayList<>();
 		BookType bookType = null;
@@ -112,6 +121,9 @@ public class BookTypeDao {
 		return list;
 	}
 
+	/**
+	 * 更新书籍类型名信息
+	 */
 	public int update(BookType bookType) {
 		String sql = "update booktype set typename = ? where id = ?";
 		try {
@@ -130,6 +142,9 @@ public class BookTypeDao {
 		return 0;
 	}
 
+	/**
+	 * 删除书籍
+	 */
 	public int delete(BookType bookType) {
 		String sql = "delete from booktype where id = ?";
 		try {
@@ -147,6 +162,9 @@ public class BookTypeDao {
 		return 0;
 	}
 
+	/**
+	 * 根据类型名查询ID
+	 */
 	public Integer findIdByName(String typename) {
 		String sql = "select id from booktype where typename = ?";
 		try {
@@ -155,7 +173,7 @@ public class BookTypeDao {
 			st.setString(1, typename);
 			rs = st.executeQuery();
 			if (rs.next()) {
-				return rs.getInt(1); 
+				return rs.getInt(1);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -165,6 +183,9 @@ public class BookTypeDao {
 		return 0;
 	}
 
+	/**
+	 * 根据类型名查询ID
+	 */
 	public String findNameById(Integer typeId) {
 		String sql = "select typename from booktype where id = ?";
 		try {

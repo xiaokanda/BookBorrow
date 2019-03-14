@@ -136,9 +136,6 @@ public class BookTypeManage extends JFrame implements MouseListener, ActionListe
 		setResizable(false);// 取消最大化
 	}
 
-	/*
-	 * public static void main(String[] args) { new BookTypeManage(); }
-	 */
 
 	@Override
 	public void actionPerformed(ActionEvent e) {

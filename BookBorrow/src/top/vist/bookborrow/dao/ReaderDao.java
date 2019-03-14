@@ -15,7 +15,9 @@ public class ReaderDao {
 	private PreparedStatement st = null;
 	private ResultSet rs = null;
 
-	// 添加读者信息
+	/**
+	 * 添加读者信息
+	 */
 	public int addReader(Reader reader) {
 		String sql = "insert into reader values(?,?,?,?,?,?,?,now())";
 		int row = 0;
@@ -39,7 +41,9 @@ public class ReaderDao {
 		return row;
 	}
 
-	// 根据读着编号查询读者是否存在
+	/**
+	 * 根据读着编号查询读者是否存在
+	 */
 	public int findByReaderId(String readerId) {
 		String sql = "select * from reader where readerid = ?";
 		try {
@@ -57,7 +61,9 @@ public class ReaderDao {
 		return 0;
 	}
 
-	// 查询所有读着信息
+	/**
+	 * 查询所有读着
+	 */
 	public List<Reader> findAll() {
 		String sql = "select * from reader";
 		List<Reader> list = new ArrayList<Reader>();
@@ -87,7 +93,9 @@ public class ReaderDao {
 		return list;
 	}
 
-	// 将list<Reader> 转为 string 数组
+	/**
+	 * 将list<Reader> 转为 string 数组
+	 */
 	public String[][] getArrayData(List<Reader> lists) {
 		String[][] data = new String[lists.size()][8];
 		ReaderTypeDao readerTypeDao = new ReaderTypeDao();
@@ -106,7 +114,9 @@ public class ReaderDao {
 		return data;
 	}
 
-	// 根据readerId 删除 reader
+	/**
+	 * 根据readerId 删除 reader
+	 */
 	public int delete(String readerId) {
 		String sql = "delete from reader where readerid = ?";
 		try {
@@ -124,7 +134,9 @@ public class ReaderDao {
 		return 0;
 	}
 
-	// 根据id模糊查询 读者
+	/**
+	 * 根据id模糊查询 读者
+	 */
 	public List<Reader> findReadersById(String str) {
 		String sql = "select * from reader where readerid like ?";
 		List<Reader> list = new ArrayList<Reader>();
@@ -132,7 +144,7 @@ public class ReaderDao {
 		try {
 			conn = JDBCUtils.getConnection();
 			st = conn.prepareStatement(sql);
-			str = "%"+str+"%";
+			str = "%" + str + "%";
 			st.setString(1, str);
 			rs = st.executeQuery();
 			while (rs.next()) {
@@ -156,7 +168,9 @@ public class ReaderDao {
 		return list;
 	}
 
-	// 根据名字模糊查询读者
+	/**
+	 * 根据名字模糊查询读者
+	 */
 	public List<Reader> findReaderByName(String str) {
 		String sql = "select * from reader where name like ?";
 		List<Reader> list = new ArrayList<Reader>();
@@ -164,7 +178,7 @@ public class ReaderDao {
 		try {
 			conn = JDBCUtils.getConnection();
 			st = conn.prepareStatement(sql);
-			str = "%"+str+"%";
+			str = "%" + str + "%";
 			st.setString(1, str);
 			rs = st.executeQuery();
 			while (rs.next()) {
@@ -188,7 +202,9 @@ public class ReaderDao {
 		return list;
 	}
 
-	// 根据读者类型模糊查询读者
+	/**
+	 * 根据读者类型模糊查询读者
+	 */
 	public List<Reader> findReaderByType(String str) {
 		String sql = "select * from reader where type in (select id from readertype where typename like ?)";
 		List<Reader> list = new ArrayList<Reader>();
@@ -196,7 +212,7 @@ public class ReaderDao {
 		try {
 			conn = JDBCUtils.getConnection();
 			st = conn.prepareStatement(sql);
-			str = "%"+str+"%";
+			str = "%" + str + "%";
 			st.setString(1, str);
 			rs = st.executeQuery();
 			while (rs.next()) {
@@ -220,7 +236,9 @@ public class ReaderDao {
 		return list;
 	}
 
-	// 根据系别模糊查询读者
+	/**
+	 * 根据系别模糊查询读者
+	 */
 	public List<Reader> findReaderDept(String str) {
 		String sql = "select * from reader where dept like ?";
 		List<Reader> list = new ArrayList<Reader>();
@@ -228,7 +246,7 @@ public class ReaderDao {
 		try {
 			conn = JDBCUtils.getConnection();
 			st = conn.prepareStatement(sql);
-			str = "%"+str+"%";
+			str = "%" + str + "%";
 			st.setString(1, str);
 			rs = st.executeQuery();
 			while (rs.next()) {
@@ -252,13 +270,16 @@ public class ReaderDao {
 		return list;
 	}
 
+	/**
+	 * 更新读着信息
+	 */
 	public int update(Reader reader) {
 		String sql = "update reader set type = ?,name = ?, age = ? ,sex = ?,phone = ?,dept = ? where readerid = ?";
 		int row = 0;
 		try {
 			conn = JDBCUtils.getConnection();
 			st = conn.prepareStatement(sql);
-			
+
 			st.setInt(1, reader.getType());
 			st.setString(2, reader.getName());
 			st.setInt(3, reader.getAge());
@@ -266,7 +287,7 @@ public class ReaderDao {
 			st.setString(5, reader.getPhone());
 			st.setString(6, reader.getDapt());
 			st.setString(7, reader.getReaderId());
-			
+
 			row = st.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();

@@ -17,11 +17,9 @@ public class BookDao {
 	private PreparedStatement st = null;
 	private ResultSet rs = null;
 
-	public static void main(String[] args) {
-		BookDao bookDao = new BookDao();
-		bookDao.getArrayData(bookDao.findAll());
-	}
-
+	/**
+	 * 保存书籍信息
+	 * */
 	public int save(Book book) {
 		String sql = "insert into book values(?,?,?,?,?,?,?,?);";
 		try {
@@ -46,8 +44,11 @@ public class BookDao {
 		return 0;
 	}
 
+	/**
+	 * 查询所有图书
+	 * */
 	public List<Book> findAll() {
-		List<Book> list = new ArrayList<>();
+		List<Book> list = new ArrayList<Book>();
 		Book book = null;
 		String sql = "select * from book";
 		try {
@@ -73,6 +74,9 @@ public class BookDao {
 		return list;
 	}
 
+	/**
+	 * 将书籍 lists 转成 二维数组
+	 * */
 	public String[][] getArrayData(List<Book> lists) {
 		String[][] data = new String[lists.size()][8];
 		BookTypeDao bookTypeDao = new BookTypeDao();
@@ -92,6 +96,9 @@ public class BookDao {
 		return data;
 	}
 
+	/**
+	 * 根据ISBN模糊查询书
+	 * */
 	public List<Book> findBooksByISBN(String intern) {
 		List<Book> list = new ArrayList<>();
 		Book book = null;
@@ -121,6 +128,9 @@ public class BookDao {
 		return list;
 	}
 
+	/**
+	 * 根据类型模糊查询书籍
+	 * */
 	public List<Book> findBooksByType(String intern) {
 		List<Book> list = new ArrayList<>();
 		Book book = null;
@@ -150,6 +160,9 @@ public class BookDao {
 		return list;
 	}
 
+	/**
+	 * 根据书名模糊查询书籍
+	 * */
 	public List<Book> findBooksByName(String intern) {
 		List<Book> list = new ArrayList<>();
 		Book book = null;
@@ -179,6 +192,9 @@ public class BookDao {
 		return list;
 	}
 
+	/**
+	 * 根据作者模糊查询书籍
+	 * */
 	public List<Book> findBooksByAuthor(String intern) {
 		List<Book> list = new ArrayList<>();
 		Book book = null;
@@ -208,12 +224,16 @@ public class BookDao {
 		return list;
 	}
 
-	public Book findBookByISBN(String text) {
+	/**
+	 * 根据ISBN查询书籍
+	 * */
+	public Book findBookByISBN(String isbn) {
 		Book book = null;
-		String sql = "select * from book";
+		String sql = "select * from book where isbn = ?";
 		try {
 			conn = JDBCUtils.getConnection();
 			st = conn.prepareStatement(sql);
+			st.setString(1, isbn);
 			rs = st.executeQuery();
 			if (rs.next()) {
 				book = new Book();
@@ -226,13 +246,15 @@ public class BookDao {
 				book.setPublishNum(rs.getInt(7));
 				book.setUnitprice(rs.getFloat(8));
 			}
-			// System.out.println("--------");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return book;
 	}
 
+	/**
+	 * 更新根据ISBN书籍信息
+	 */
 	public int update(Book book) {
 
 		String sql = "update book set typeid = ?,bookname=?,author=?,publish = ? ,publishdate = ? ,publishnum=? ,unitprice=? where isbn = ? ";
@@ -258,6 +280,9 @@ public class BookDao {
 		return 0;
 	}
 
+	/**
+	 * 根据ISBN删除书籍
+	 */
 	public int delete(String isbn) {
 		String sql = "delete from book where isbn = ?";
 		try {

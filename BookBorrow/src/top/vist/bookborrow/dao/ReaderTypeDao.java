@@ -15,7 +15,9 @@ public class ReaderTypeDao {
 	private PreparedStatement st = null;
 	private ResultSet rs = null;
 
-	// 查询所有读者类型名
+	/**
+	 * 查询所有读者类型名
+	 */
 	public List<String> findNameAll() {
 		List<String> list = new ArrayList<>();
 		String sql = "select typename from readertype";
@@ -35,7 +37,9 @@ public class ReaderTypeDao {
 		return list;
 	}
 
-	// 根据读者类型名查询读者编号
+	/**
+	 * 根据读者类型名查询读者编号
+	 */
 	public int findIdByName(String typename) {
 		String sql = "select id from readertype where typename = ?";
 		int id = 1;
@@ -54,7 +58,9 @@ public class ReaderTypeDao {
 		return id;
 	}
 
-	// 查询所有读者类型
+	/**
+	 * 查询所有读者类型
+	 */
 	public List<ReaderType> findAll() {
 		List<ReaderType> list = new ArrayList<>();
 		ReaderType readerType = null;
@@ -79,7 +85,9 @@ public class ReaderTypeDao {
 		return list;
 	}
 
-	// 讲list集合转成数组
+	/**
+	 * 将list集合转成数组
+	 */
 	public String[][] getArrayData(List<ReaderType> readerTypes) {
 		String[][] data = new String[readerTypes.size()][4];
 		for (int i = 0; i < readerTypes.size(); i++) {
@@ -93,7 +101,9 @@ public class ReaderTypeDao {
 		return data;
 	}
 
-	// 条件查询
+	/**
+	 * 条件查询
+	 */
 	public List<ReaderType> search(String readerTypeName) {
 		List<ReaderType> list = new ArrayList<>();
 		ReaderType readerType = null;
@@ -120,6 +130,9 @@ public class ReaderTypeDao {
 		return list;
 	}
 
+	/**
+	 * 添加用户
+	 */
 	public int save(ReaderType readerType) {
 		String sql = "insert into readertype(typename,maxborrownum,`limit`) values(?,?,?);";
 		try {
@@ -141,7 +154,9 @@ public class ReaderTypeDao {
 		return 0;
 	}
 
-	// 修改读者类别
+	/**
+	 * 修改读者类别
+	 */
 	public int update(ReaderType readerType) {
 		String sql = "update readertype set typename = ?, maxborrownum = ?, `limit`= ? where id = ?";
 		try {
@@ -164,6 +179,9 @@ public class ReaderTypeDao {
 		return 0;
 	}
 
+	/**
+	 * 删除读者信息
+	 */
 	public int delete(ReaderType readerType) {
 		String sql = "delete from readertype where id=?";
 		try {
@@ -181,6 +199,9 @@ public class ReaderTypeDao {
 		return 0;
 	}
 
+	/**
+	 * 根据id查询读者姓名
+	 */
 	public String getNameById(Integer type) {
 		String sql = "select typename from readertype where id= ?";
 		String typeName = null;
@@ -189,13 +210,13 @@ public class ReaderTypeDao {
 			st = conn.prepareStatement(sql);
 			st.setInt(1, type);
 			rs = st.executeQuery();
-			if(rs.next()) {
+			if (rs.next()) {
 				typeName = rs.getString(1);
 			}
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			JDBCUtils.colseAll(conn, st, rs);
 		}
 		return typeName;

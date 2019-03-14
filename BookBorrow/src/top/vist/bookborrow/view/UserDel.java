@@ -24,6 +24,8 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import top.vist.bookborrow.dao.UserDao;
+
 
 public class UserDel extends JFrame implements ActionListener{
 	private static final long serialVersionUID = 1L;
@@ -47,7 +49,8 @@ public class UserDel extends JFrame implements ActionListener{
         
         readersearch = new String[]{ "用户编号","用户名","密码"};
         results=new String[][]{};
-      //  results=UserDao.getArrayData(UserDao.getUserList());
+        UserDao userDao = new UserDao();
+        results=userDao.getArrayData(userDao.findAll());
         jtable = new JTable(results, readersearch);
         jtable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);        
         jscrollPane.setViewportView(jtable);
@@ -70,28 +73,25 @@ public class UserDel extends JFrame implements ActionListener{
 		setResizable(false);// 取消最大化
 	}
 
-	/*public static void main(String[] args) {
-		new UserDel();
-	}*/
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource()==updateJB){
+			UserDao userDao = new UserDao();
 			int row = jtable.getSelectedRow();
 			if(row==-1){
 				JOptionPane.showMessageDialog(this, "请先选中用户！！！");
 			}else {
 				int userId = Integer.valueOf(results[row][0]);
-				/*int r=UserDao.delUser(userId);
+				int r = userDao.delete(userId);
 				if(r!=0){
-					JOptionPane.showMessageDialog(this, "删除成功！");
-					results=UserDao.getArrayData(UserDao.getUserList());
+					results=userDao.getArrayData(userDao.findAll());
 			        jtable = new JTable(results, readersearch);
 			        jtable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);        
 			        jscrollPane.setViewportView(jtable);
+					JOptionPane.showMessageDialog(this, "删除成功！");
 				}else {
 					JOptionPane.showMessageDialog(this, "删除失败！");
-				}*/
+				}
 			}
 		}
 		if(e.getSource()==closeJB){

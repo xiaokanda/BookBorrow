@@ -179,24 +179,6 @@ public class BookAdd extends JFrame implements ActionListener, FocusListener {
 			} else {
 				JOptionPane.showMessageDialog(this, "图书添加失败");
 			}
-			/*
-			 * Book book = new Boo(); book.setISBN(ISBNJT.getText());
-			 * 
-			 * String typename = (String) lbieJCB.getSelectedItem();
-			 * 
-			 * int bookTypeId= getBookTypeId(typename); book.setTypeid(bookTypeId);
-			 * book.setBookName(bknJT.getText()); book.setAuthor(wrtnJT.getText());
-			 * book.setPublish(cbsnJT.getText());
-			 * //System.out.println(Date.valueOf(dateJT.getText()));
-			 * book.setStrPublishDate(dateJT.getText());
-			 * 
-			 * book.setPublishtime(Integer.parseInt(numJT.getText()));
-			 * book.setUnitprice(Float.valueOf(vlJT.getText()));
-			 * 
-			 * int r = BookDao.insertBook(book); if (r == 1) {
-			 * JOptionPane.showMessageDialog(this, "图书添加成功"); } else {
-			 * JOptionPane.showMessageDialog(this, "图书添加失败"); }
-			 */
 		}
 		if (e.getSource() == ISBNJT) {
 			JOptionPane.showMessageDialog(this, "输入完成！");
@@ -204,17 +186,5 @@ public class BookAdd extends JFrame implements ActionListener, FocusListener {
 		if (e.getSource() == closeJB) {
 			dispose();
 		}
-
 	}
-
-	public int getBookTypeId(String typename) {
-		/*
-		 * String sql = "select id from booktype where typename=?"; ResultSet rs =
-		 * Dao.executeQuery(sql, typename); int a = 0; try { if (rs.next()) { a =
-		 * rs.getInt("id"); } } catch (SQLException e) { e.printStackTrace(); } return
-		 * a;
-		 */
-		return 0;
-	}
-
 }
