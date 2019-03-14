@@ -110,7 +110,7 @@ public class Library extends JFrame {
 		menuitem51.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// new UserAdd();
+				 new UserAdd();
 			}
 		});
 		menuitem52 = new JMenuItem("修改密码");
@@ -118,7 +118,7 @@ public class Library extends JFrame {
 		menuitem52.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// new UpdatePWD();
+				 new UpdatePWD();
 			}
 		});
 		menuitem53 = new JMenuItem("删除用户");
@@ -126,7 +126,7 @@ public class Library extends JFrame {
 		menuitem53.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// new UserDel();
+				 new UserDel();
 			}
 		});
 		this.setVisible(true);// 设置显示窗体
