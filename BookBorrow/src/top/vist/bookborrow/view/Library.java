@@ -71,7 +71,7 @@ public class Library extends JFrame {
 		menuitem31.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// new BookBorrow();
+				 new BookBorrow();
 			}
 		});
 		menuitem32 = new JMenuItem("图书归还");
@@ -79,7 +79,7 @@ public class Library extends JFrame {
 		menuitem32.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// new BookReturn();
+				 new BookReturn();
 			}
 		});
 		menu4 = new JMenu("基础信息维护");
