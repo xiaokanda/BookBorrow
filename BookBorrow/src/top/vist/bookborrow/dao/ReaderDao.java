@@ -296,4 +296,30 @@ public class ReaderDao {
 		}
 		return row;
 	}
+
+	/**
+	 * 根据读者编号查询读者
+	 */
+	public Reader findReaderById(String readerId) {
+		Reader reader = null;
+		String sql = "select readerid,`type` ,`name` from reader where readerid = ? ";
+		try {
+			conn = JDBCUtils.getConnection();
+			st = conn.prepareStatement(sql);
+			st.setString(1, readerId);
+			rs = st.executeQuery();
+			if (rs.next()) {
+				reader = new Reader();
+				reader.setReaderId(rs.getString(1));
+				reader.setType(rs.getInt(2));
+				reader.setName(rs.getString(3));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			JDBCUtils.colseAll(conn, st, rs);
+		}
+		return reader;
+	}
 }

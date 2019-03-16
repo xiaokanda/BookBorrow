@@ -1,6 +1,6 @@
 package top.vist.bookborrow.entity;
 
-public class BookBorrow {
+public class BorrowBook {
 	private Long id;
 	private String readerId;
 	private String ISBN;

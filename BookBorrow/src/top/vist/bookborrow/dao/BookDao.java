@@ -70,6 +70,8 @@ public class BookDao {
 			// System.out.println("--------");
 		} catch (SQLException e) {
 			e.printStackTrace();
+		}finally {
+			JDBCUtils.colseAll(conn, st, rs);
 		}
 		return list;
 	}

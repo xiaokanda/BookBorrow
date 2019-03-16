@@ -5,8 +5,9 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.text.SimpleDateFormat;
-import java.util.List;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -21,8 +22,15 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
 
+import top.vist.bookborrow.dao.BookDao;
+import top.vist.bookborrow.dao.BookTypeDao;
+import top.vist.bookborrow.dao.BorrowBookDao;
+import top.vist.bookborrow.dao.ReaderDao;
+import top.vist.bookborrow.dao.ReaderTypeDao;
+import top.vist.bookborrow.entity.Book;
+import top.vist.bookborrow.entity.Reader;
 
-public class BookBorrow extends JFrame implements ActionListener {
+public class BookBorrow extends JFrame implements ActionListener, FocusListener {
 
 	/**
 	 * 图书借阅窗口
@@ -30,12 +38,10 @@ public class BookBorrow extends JFrame implements ActionListener {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel selectJP, conditionJP, resultJP, sexJP, updateJP, buttonJP;
-	private JLabel readeridJL, readernameJL, readertypeJL, ISBNJL, typeJL,
-			booknameJL, authorJL, pubJL, pubdateJL, numJL, unitJL, dateJL,
-			dayJL, fineJL, adminJL;
-	private JTextField readeridJTF, readernameJTF, readertypeJTF, ISBNJTF,
-			typeJTF, booknameJTF, authorJTF, pubJTF, pubdateJTF, numJTF,
-			unitJTF, dateJTF, dayJTF, fineJTF, adminJTF;
+	private JLabel readeridJL, readernameJL, readertypeJL, ISBNJL, typeJL, booknameJL, authorJL, pubJL, pubdateJL,
+			numJL, unitJL, dateJL, dayJL, fineJL, adminJL;
+	private JTextField readeridJTF, readernameJTF, readertypeJTF, ISBNJTF, typeJTF, booknameJTF, authorJTF, pubJTF,
+			pubdateJTF, numJTF, unitJTF, dateJTF, dayJTF, fineJTF, adminJTF;
 
 	private ButtonGroup buttonGroup = new ButtonGroup();
 
@@ -53,8 +59,7 @@ public class BookBorrow extends JFrame implements ActionListener {
 		// 读者借阅信息查询面板设计
 		selectJP = new JPanel();
 		selectJP.setLayout(new BorderLayout());
-		selectJP.setBorder(new TitledBorder(null, "读书借阅信息",
-				TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		selectJP.setBorder(new TitledBorder(null, "读书借阅信息", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		// 查询条件面板
 		// 查询条件下拉列表框
 		conditionJP = new JPanel();
@@ -64,9 +69,10 @@ public class BookBorrow extends JFrame implements ActionListener {
 
 		readernameJL = new JLabel("读者姓名：");
 		readernameJTF = new JTextField(8);
+		//readernameJTF.setEnabled(false);
 		readertypeJL = new JLabel("读者类别：");
 		readertypeJTF = new JTextField(8);
-
+		//readertypeJTF.setEnabled(false);
 		conditionJP.add(readeridJL);
 		conditionJP.add(readeridJTF);
 		conditionJP.add(readernameJL);
@@ -93,8 +99,7 @@ public class BookBorrow extends JFrame implements ActionListener {
 		// 读者信息修改面板设计
 		updateJP = new JPanel();
 		updateJP.setBorder(new EmptyBorder(5, 10, 5, 10));
-		updateJP.setBorder(new TitledBorder(null, "图书借阅", TitledBorder.LEADING,
-				TitledBorder.TOP, null, null));
+		updateJP.setBorder(new TitledBorder(null, "图书借阅", TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		GridLayout gridLayout = new GridLayout(5, 4);
 		gridLayout.setVgap(10);
 		gridLayout.setHgap(10);
@@ -155,6 +160,7 @@ public class BookBorrow extends JFrame implements ActionListener {
 		dateJL.setHorizontalAlignment(SwingConstants.CENTER);
 		updateJP.add(dateJL);
 		dateJTF = new JTextField(str);
+		dateJTF.setEditable(false);
 		updateJP.add(dateJTF);
 
 		adminJL = new JLabel("操作人员：");
@@ -178,8 +184,8 @@ public class BookBorrow extends JFrame implements ActionListener {
 
 		borrowJB.addActionListener(this);
 		closeJB.addActionListener(this);
-		readeridJTF.addActionListener(this);
-		ISBNJTF.addActionListener(this);
+		ISBNJTF.addFocusListener(this);
+		readeridJTF.addFocusListener(this);
 		this.setVisible(true);// 设置窗体显示，否则不显示。
 		setResizable(false);// 取消最大化
 
@@ -187,86 +193,77 @@ public class BookBorrow extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() == borrowJB) {
-			/*// JOptionPane.showMessageDialog(this, "借阅按钮被点击！");
-			String readerid = null, ISBN = null, date = null;
-			readerid = readeridJTF.getText();
-			ISBN = ISBNJTF.getText();
-			date = dateJTF.getText();
-			if (readerid.equals("") || ISBN.equals("")) {
-				JOptionPane.showMessageDialog(this, "读者编号或者ISBN为空");
-			} else {
-				int rows = BorrowBookDao.borrowBook(readerid, ISBN, date);
-				if (rows != 0) {
-					JOptionPane.showMessageDialog(this, "借阅添加成功");
-					List<BorrowBook> bbks = BorrowBookDao
-							.selectBorrowByReaderId(readerid);
-					results = getArrayData(bbks);
-					jtable = new JTable(results, readersearch);
-					jtable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
-					jscrollPane.setViewportView(jtable);
+		BorrowBookDao borrowBookDao = new BorrowBookDao();
 
-					resultJP.add(jscrollPane);
-				} else {
-					JOptionPane.showMessageDialog(this, "借阅添加失败");
-				}
-			}*/
+		if (e.getSource() == borrowJB) {
+			String readerid = readeridJTF.getText().intern();
+			String ISBN = ISBNJTF.getText().intern();
+			if ("".equals(readerid) || "".equals(ISBN)) {
+				JOptionPane.showMessageDialog(this, "请输入读者编号和ISBN");
+				return;
+			}
+			int row = borrowBookDao.save(readerid, ISBN);
+			if (row == 1) {
+				results = borrowBookDao.getArrayData(borrowBookDao.findBorrowByReaderId(readeridJTF.getText().intern()));
+				jtable = new JTable(results, readersearch);
+				jtable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
+				jscrollPane.setViewportView(jtable);
+				JOptionPane.showMessageDialog(this, "添加成功！");
+			} else {
+				JOptionPane.showMessageDialog(this, "添加失败！");
+			}
 		}
 		if (e.getSource() == closeJB) {
 			dispose();
 		}
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		ReaderDao readerDao = new ReaderDao();
+		BookDao bookDao = new BookDao();
+		BookTypeDao bookTypeDao = new BookTypeDao();
+		ReaderTypeDao readerTypeDao = new ReaderTypeDao();
+		BorrowBookDao borrowBookDao = new BorrowBookDao();
 		if (e.getSource() == readeridJTF) {
-			/*String readerid = null;
-			readerid = readeridJTF.getText();
-			if (BorrowBookDao.getRaderName(readerid) == null) {
-				JOptionPane.showMessageDialog(this, "没该用户！");
+			if ("".equals(readeridJTF.getText().intern()))
+				return;
+			Reader reader = readerDao.findReaderById(readeridJTF.getText().intern());
+			if (reader == null) {
 				readeridJTF.setText(null);
+				JOptionPane.showMessageDialog(this, "没该用户！");
 			} else {
-				readernameJTF.setText(BorrowBookDao.getRaderName(readerid));
-				readertypeJTF.setText(BorrowBookDao.getRaderType(readerid));
-				List<BorrowBook> bbks = BorrowBookDao
-						.selectBorrowByReaderId(readerid);
-				results = getArrayData(bbks);
+				readernameJTF.setText(reader.getName());
+				readertypeJTF.setText(readerTypeDao.getNameById(reader.getType()));
+				results = borrowBookDao.getArrayData(borrowBookDao.findBorrowByReaderId(reader.getReaderId()));
 				jtable = new JTable(results, readersearch);
 				jtable.setAutoResizeMode(JTable.AUTO_RESIZE_SUBSEQUENT_COLUMNS);
 				jscrollPane.setViewportView(jtable);
+			}
 
-				resultJP.add(jscrollPane);
-			}*/
 		}
 		if (e.getSource() == ISBNJTF) {
-			/*String ISBN = null;
-			ISBN = ISBNJTF.getText();
-			Book book = new Book();
-			book = BorrowBookDao.getBook(ISBN);
+			if ("".equals(ISBNJTF.getText().intern()))
+				return;
+			Book book = bookDao.findBookByISBN(ISBNJTF.getText().intern());
 			if (book == null) {
-				JOptionPane.showMessageDialog(this, "查无此书！");
+				ISBNJTF.setText(null);
+				JOptionPane.showMessageDialog(this, "查无此书");
 			} else {
-				typeJTF.setText(book.getTypename());
+				typeJTF.setText(bookTypeDao.findNameById(book.getTypeId()));
 				booknameJTF.setText(book.getBookName());
 				authorJTF.setText(book.getAuthor());
 				pubJTF.setText(book.getPublish());
-				SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-				pubdateJTF.setText(df.format(book.getPublishDate()));
-				numJTF.setText(book.getPublishtime() + "");
+				pubdateJTF.setText(book.getStrPublishDate());
+				numJTF.setText(book.getPublishNum() + "");
 				unitJTF.setText(book.getUnitprice() + "");
-			}*/
-
+			}
 		}
 	}
 
-	/*// 将borrowbook 的list转化成一个字符串数组
-	public String[][] getArrayData(List<BorrowBook> borrowbooks) {
-		String[][] data = new String[borrowbooks.size()][3];
+	@Override
+	public void focusGained(FocusEvent e) {
+	}
 
-		for (int i = 0; i < borrowbooks.size(); i++) {
-			BorrowBook bbk = borrowbooks.get(i);
-			data[i][0] = bbk.getISBN();
-			data[i][1] = bbk.getName();
-			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-			data[i][2] = format.format(bbk.getBorrowDate());
-		}
-		return data;
-	}*/
 
 }
