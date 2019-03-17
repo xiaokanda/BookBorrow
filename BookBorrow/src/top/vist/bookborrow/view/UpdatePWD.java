@@ -88,9 +88,6 @@ public class UpdatePWD extends JFrame implements ActionListener, FocusListener {
 		txt1.addFocusListener(this);
 	}
 
-	/*
-	 * public static void main(String[] args) { new UpdatePWD(); }
-	 */
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -106,6 +103,7 @@ public class UpdatePWD extends JFrame implements ActionListener, FocusListener {
 			if (name == null || pwd1 == null || pwd2 == null || pwd3 == null || "".equals(name) || "".equals(pwd1)
 					|| "".equals(pwd2) || "".equals(pwd3)) {
 				JOptionPane.showMessageDialog(this, "请输入完整信息！");
+				return;
 			} else {
 				if (!pwd2.equals(pwd3)) {
 					pas1.setText(null);
@@ -117,6 +115,7 @@ public class UpdatePWD extends JFrame implements ActionListener, FocusListener {
 				User user = userDao.login(name, pwd1);
 				if (user == null) {
 					JOptionPane.showMessageDialog(this, "用户名或者密码不正确");
+					return;
 				} else {
 					int row = userDao.update(name, pwd2);
 					if (row == 1) {
@@ -142,7 +141,11 @@ public class UpdatePWD extends JFrame implements ActionListener, FocusListener {
 
 	@Override
 	public void focusLost(FocusEvent e) {
+		
 		String name = txt1.getText().intern();
+		if("".equals(name)) {
+			return;
+		}
 		UserDao userDao = new UserDao();
 		User user  = userDao.findUserByName(name);
 		if(user == null) {

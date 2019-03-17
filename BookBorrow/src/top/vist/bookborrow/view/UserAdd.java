@@ -73,6 +73,7 @@ public class UserAdd extends JFrame implements ActionListener, FocusListener {
 			user.setPassword(pwdJP1.getText());
 			if ("".equals(user.getUserName()) || "".equals(user.getPassword())) {
 				JOptionPane.showMessageDialog(this, "用户名或密码为空！！！");
+				return;
 			} else {
 				int row = userDao.save(user);
 				if (row != 0) {

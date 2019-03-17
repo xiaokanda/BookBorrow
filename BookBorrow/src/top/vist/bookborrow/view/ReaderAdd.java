@@ -7,8 +7,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -38,7 +36,7 @@ public class ReaderAdd extends JFrame implements ActionListener, FocusListener {
 	private JRadioButton JRB1, JRB2;
 	private JLabel IDJL, categoryJL, readerNameJL, sexJL, phoneJLabel, deptJLabel, ageJLabel, regJLabel;
 	private JTextField IDJTF, readerNameJTF, phoneJTF, deptJTF, ageJTF, regtimeJTF;
-	private JComboBox readertypeJCB;
+	private JComboBox<String> readertypeJCB;
 	private JButton addJB, closeJB;
 
 	public ReaderAdd() {
@@ -151,54 +149,58 @@ public class ReaderAdd extends JFrame implements ActionListener, FocusListener {
 		setResizable(false);// 取消最大化
 	}
 
-	public static void main(String[] args) {
-		new ReaderAdd();
-	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Reader reader = new Reader();
-		reader.setReaderId(IDJTF.getText());
-		if (reader.getReaderId() == null || "".equals(reader.getReaderId())) {
-			JOptionPane.showMessageDialog(this, "编号不能为空！");
-			return;
-		}
-		// 读者类型编号获取过程
-		String typename = (String) readertypeJCB.getSelectedItem();
-		ReaderTypeDao readerTypeDao = new ReaderTypeDao();
-		// 查询typeId
-		int typeId = readerTypeDao.findIdByName(typename);
-		reader.setType(typeId);
-		reader.setName(readerNameJTF.getText());
-		String sex = "";
-		if (JRB1.isSelected()) {
-			sex = JRB1.getText();
-		} else {
-			sex = JRB2.getText();
-		}
-		reader.setSex(sex);
-		int age = 0;
-		try {
-			Integer.valueOf(ageJTF.getText());
-		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(this, "请输入正确的年龄！");
-			return;
-		}
-		reader.setAge(age);
-		reader.setPhone(phoneJTF.getText());
-		reader.setDapt(deptJTF.getText());
-		ReaderDao readerDao = new ReaderDao();
-		int row = readerDao.addReader(reader);
-		if (row == 1) {
-			dispose();
-			JOptionPane.showMessageDialog(this, "读者添加成功！");
-		} else {
-			IDJTF.setText(null);
-			readerNameJTF.setText(null);
-			ageJTF.setText(null);
-			phoneJTF.setText(null);
-			deptJTF.setText(null);
-			JOptionPane.showMessageDialog(this, "读者添加失败！");
+		if (e.getSource() == addJB) {
+			Reader reader = new Reader();
+			reader.setReaderId(IDJTF.getText());
+			if (reader.getReaderId() == null || "".equals(reader.getReaderId())) {
+				JOptionPane.showMessageDialog(this, "编号不能为空！");
+				return;
+			}
+			// 读者类型编号获取过程
+			String typename = (String) readertypeJCB.getSelectedItem();
+			ReaderTypeDao readerTypeDao = new ReaderTypeDao();
+			// 查询typeId
+			int typeId = readerTypeDao.findIdByName(typename);
+			reader.setType(typeId);
+			reader.setName(readerNameJTF.getText());
+			String sex = "";
+			if (JRB1.isSelected()) {
+				sex = JRB1.getText();
+			} else {
+				sex = JRB2.getText();
+			}
+			reader.setSex(sex);
+			int age = 0;
+			try {
+				Integer.valueOf(ageJTF.getText());
+			} catch (Exception e1) {
+				JOptionPane.showMessageDialog(this, "请输入正确的年龄！");
+				return;
+			}
+			reader.setAge(age);
+			reader.setPhone(phoneJTF.getText());
+			reader.setDapt(deptJTF.getText());
+			ReaderDao readerDao = new ReaderDao();
+			Reader reader1 = readerDao.findReaderById(reader.getReaderId());
+			if (reader != null) {
+				JOptionPane.showMessageDialog(this, "改读者已经存在,如未有查到,请读者信息管理处修改读者信息！");
+				return;
+			}
+			int row = readerDao.addReader(reader);
+			if (row == 1) {
+				dispose();
+				JOptionPane.showMessageDialog(this, "读者添加成功！");
+			} else {
+				IDJTF.setText(null);
+				readerNameJTF.setText(null);
+				ageJTF.setText(null);
+				phoneJTF.setText(null);
+				deptJTF.setText(null);
+				JOptionPane.showMessageDialog(this, "读者添加失败！");
+			}
 		}
 		if (e.getSource() == closeJB) {
 			dispose();
@@ -214,7 +216,10 @@ public class ReaderAdd extends JFrame implements ActionListener, FocusListener {
 	@Override
 	// 判定读着编号是否可用
 	public void focusLost(FocusEvent e) {
+		//System.out.println("---------------");
 		if (e.getSource() == IDJTF) {
+			if ("".equals(IDJTF.getText()))
+				return;
 			String readerId = IDJTF.getText();
 			if (readerId != null) {
 				ReaderDao readerDao = new ReaderDao();

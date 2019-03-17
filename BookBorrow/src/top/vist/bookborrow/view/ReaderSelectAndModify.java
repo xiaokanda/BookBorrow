@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.List;
@@ -30,14 +32,14 @@ import top.vist.bookborrow.entity.Reader;
 import top.vist.bookborrow.entity.ReaderType;
 
 //-------------实现接口-----------------//
-public class ReaderSelectAndModify extends JFrame implements MouseListener, ActionListener {
+public class ReaderSelectAndModify extends JFrame implements MouseListener, ActionListener, FocusListener {
 	private static final long serialVersionUID = 1L;
 
 	private JPanel selectJP, select_conditionJP, select_resultJP, sexJP, updateJP, buttonJP;
 	private ButtonGroup buttonGroup = new ButtonGroup();
 	private JLabel IDJL, typeJL, readerNameJL, sexJL, phoneJL, deptJL, ageJL, regJL;
 	private JTextField select_conditionJTF, IDJTF, readerNameJTF, phoneJTF, deptJTF, ageJTF, regJTF;
-	private JComboBox conditionJCB, readertypeJCB;
+	private JComboBox<String> conditionJCB, readertypeJCB;
 	private JScrollPane jscrollPane;
 
 	private JRadioButton JRB1, JRB2;
@@ -102,7 +104,7 @@ public class ReaderSelectAndModify extends JFrame implements MouseListener, Acti
 		IDJL.setHorizontalAlignment(SwingConstants.CENTER);
 		updateJP.add(IDJL);
 		IDJTF = new JTextField();
-		IDJTF.setEditable(false);
+		// IDJTF.setEditable(false);
 		updateJP.add(IDJTF);
 
 		readerNameJL = new JLabel("姓名：");
@@ -115,7 +117,7 @@ public class ReaderSelectAndModify extends JFrame implements MouseListener, Acti
 		typeJL.setHorizontalAlignment(SwingConstants.CENTER);
 		updateJP.add(typeJL);
 		// 下拉列表
-		readertypeJCB = new JComboBox();
+		readertypeJCB = new JComboBox<String>();
 		ReaderTypeDao readerTypeDao = new ReaderTypeDao();
 
 		List<ReaderType> lists = readerTypeDao.findAll();
@@ -182,6 +184,7 @@ public class ReaderSelectAndModify extends JFrame implements MouseListener, Acti
 		closeJB.addActionListener(this);
 		deleteJB.addActionListener(this);
 		selectJB.addActionListener(this);
+		IDJTF.addFocusListener(this);
 		this.add(selectJP, BorderLayout.NORTH);
 		this.add(updateJP, BorderLayout.CENTER);
 		this.add(buttonJP, BorderLayout.SOUTH);
@@ -208,6 +211,7 @@ public class ReaderSelectAndModify extends JFrame implements MouseListener, Acti
 				jtable = new JTable(results, readersearch);
 				jtable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 				jscrollPane.setViewportView(jtable);
+				jtable.addMouseListener(this);
 				JOptionPane.showMessageDialog(this, "删除成功！");
 			} else {
 				IDJTF.setText(null);
@@ -240,7 +244,7 @@ public class ReaderSelectAndModify extends JFrame implements MouseListener, Acti
 			reader.setSex(sex);
 			int age = 0;
 			try {
-				Integer.valueOf(ageJTF.getText());
+				age = Integer.valueOf(ageJTF.getText());
 			} catch (Exception e1) {
 				JOptionPane.showMessageDialog(this, "请输入正确的年龄！");
 				return;
@@ -249,11 +253,12 @@ public class ReaderSelectAndModify extends JFrame implements MouseListener, Acti
 			reader.setPhone(phoneJTF.getText());
 			reader.setDapt(deptJTF.getText());
 			int row = readerDao.update(reader);
-			if (row == 1) {
+			if (row != 0) {
 				results = readerDao.getArrayData(readerDao.findAll());
 				jtable = new JTable(results, readersearch);
 				jtable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 				jscrollPane.setViewportView(jtable);
+				jtable.addMouseListener(this);
 				JOptionPane.showMessageDialog(this, "修改成功！");
 			} else {
 				JOptionPane.showMessageDialog(this, "修改失败!");
@@ -329,6 +334,44 @@ public class ReaderSelectAndModify extends JFrame implements MouseListener, Acti
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 
+	}
+
+	@Override
+	public void focusGained(FocusEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		// System.out.println("+++++++++++++++++++++");
+		String readerid = IDJTF.getText().intern();
+		if ("".equals(readerid)) {
+			JOptionPane.showMessageDialog(this, "读者编号不能为空");
+			return;
+		}
+		ReaderDao readerDao = new ReaderDao();
+		ReaderTypeDao readerTypeDao = new ReaderTypeDao();
+		Reader reader = readerDao.findReaderById(readerid);
+		if (reader == null) {
+			IDJTF.setText(null);
+			JOptionPane.showMessageDialog(this, "没有该读者！");
+			return;
+		}
+		IDJTF.setText(reader.getReaderId());
+		readertypeJCB.setSelectedItem(readerTypeDao.getNameById(reader.getType()));
+		readerNameJTF.setText(reader.getName());
+		if ("男".equals(reader.getSex())) {
+			JRB1.setSelected(true);
+			JRB2.setSelected(false);
+		} else {
+			JRB1.setSelected(false);
+			JRB2.setSelected(true);
+		}
+		ageJTF.setText(reader.getAge() + "");
+		phoneJTF.setText(reader.getPhone());
+		deptJTF.setText(reader.getDapt());
+		regJTF.setText(reader.getRegDate());
 	}
 
 }

@@ -41,8 +41,8 @@ public class BookSelectAndUpdate extends JFrame implements ActionListener, Focus
 	private JTable jtable;
 	private JButton button1, button2, deleteJB;
 
-	private JTextField ISBNJT, lbieJT, bknJT, wrtnJT, cbsnJT, dateJT, numJT, vlJT;
-	private JLabel ISBNJL, lbieJL, bknJL, wrtnJL, cbsnJL, dateJL, numJL, vlJL;
+	private JTextField ISBNJT, bookNameJT,lbieJT, bknJT, wrtnJT, cbsnJT, dateJT, numJT, vlJT;
+	private JLabel ISBNJL,bookNameJL, lbieJL, bknJL, wrtnJL, cbsnJL, dateJL, numJL, vlJL;
 	private JButton moJB, closeJB;
 	private JComboBox lbieJCB;
 	private String[][] results;
@@ -107,6 +107,12 @@ public class BookSelectAndUpdate extends JFrame implements ActionListener, Focus
 		ISBNJT = new JTextField();
 		infoPanel.add(ISBNJT);
 
+		bookNameJL = new JLabel("图书名称：");
+		bookNameJL.setHorizontalAlignment(SwingConstants.CENTER);
+		infoPanel.add(bookNameJL);
+		bookNameJT = new JTextField();
+		infoPanel.add(bookNameJT);
+		
 		lbieJL = new JLabel("类别：");
 		lbieJL.setHorizontalAlignment(SwingConstants.CENTER);
 		infoPanel.add(lbieJL);
@@ -184,8 +190,10 @@ public class BookSelectAndUpdate extends JFrame implements ActionListener, Focus
 			book.setISBN(ISBNJT.getText());
 			if (book.getISBN() == null || "".equals(book.getISBN())) {
 				JOptionPane.showMessageDialog(this, "ISBN不能为空！");
-				return ;
+				return;
 			}
+			book.setBookName(bookNameJT.getText());
+			//System.out.println(book.getBookName());
 			book.setTypeId(bookTypeDao.findIdByName((String) lbieJCB.getSelectedItem()));
 			book.setAuthor(wrtnJT.getText());
 			book.setPublish(cbsnJT.getText());
@@ -222,7 +230,7 @@ public class BookSelectAndUpdate extends JFrame implements ActionListener, Focus
 			BookDao bookDao = new BookDao();
 			String type = (String) JComboBox.getSelectedItem();
 			String str = chaxunJTF.getText();
-			if (str==null||str.length() == 0) {
+			if (str == null || str.length() == 0) {
 				results = bookDao.getArrayData(bookDao.findAll());
 			} else {
 				if (type.equals("ISBN")) {
@@ -274,6 +282,8 @@ public class BookSelectAndUpdate extends JFrame implements ActionListener, Focus
 		if (e.getSource() == ISBNJT) {
 			BookDao bookDao = new BookDao();
 			Book book = new Book();
+			if ("".equals(ISBNJT.getText().intern()))
+				return;
 			book = bookDao.findBookByISBN(ISBNJT.getText());
 			if (book == null) {
 				ISBNJT.setText(null);
@@ -281,6 +291,7 @@ public class BookSelectAndUpdate extends JFrame implements ActionListener, Focus
 				return;
 			}
 			BookTypeDao bookTypeDao = new BookTypeDao();
+			bookNameJT.setText(book.getBookName());
 			lbieJCB.setSelectedItem(bookTypeDao.findNameById(book.getTypeId()));
 			wrtnJT.setText(book.getAuthor());
 			cbsnJT.setText(book.getPublish());

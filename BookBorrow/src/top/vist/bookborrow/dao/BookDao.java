@@ -21,7 +21,7 @@ public class BookDao {
 	 * 保存书籍信息
 	 * */
 	public int save(Book book) {
-		String sql = "insert into book values(?,?,?,?,?,?,?,?);";
+		String sql = "insert into book values(?,?,?,?,?,?,?,?,1);";
 		try {
 			conn = JDBCUtils.getConnection();
 			st = conn.prepareStatement(sql);
@@ -50,7 +50,7 @@ public class BookDao {
 	public List<Book> findAll() {
 		List<Book> list = new ArrayList<Book>();
 		Book book = null;
-		String sql = "select * from book";
+		String sql = "select * from book where state = 1";
 		try {
 			conn = JDBCUtils.getConnection();
 			st = conn.prepareStatement(sql);
@@ -104,7 +104,7 @@ public class BookDao {
 	public List<Book> findBooksByISBN(String intern) {
 		List<Book> list = new ArrayList<>();
 		Book book = null;
-		String sql = "select * from book where isbn like ?";
+		String sql = "select * from book where isbn like ? and state = 1";
 		try {
 			conn = JDBCUtils.getConnection();
 			st = conn.prepareStatement(sql);
@@ -136,7 +136,7 @@ public class BookDao {
 	public List<Book> findBooksByType(String intern) {
 		List<Book> list = new ArrayList<>();
 		Book book = null;
-		String sql = "select * from book where typeid in (	select id from booktype where typename like ?);";
+		String sql = "select * from book where typeid in (	select id from booktype where typename like ? ) and state = 1;";
 		try {
 			conn = JDBCUtils.getConnection();
 			st = conn.prepareStatement(sql);
@@ -168,7 +168,7 @@ public class BookDao {
 	public List<Book> findBooksByName(String intern) {
 		List<Book> list = new ArrayList<>();
 		Book book = null;
-		String sql = "select * from book where bookname like ?";
+		String sql = "select * from book where bookname like ? and state = 1";
 		try {
 			conn = JDBCUtils.getConnection();
 			st = conn.prepareStatement(sql);
@@ -200,7 +200,7 @@ public class BookDao {
 	public List<Book> findBooksByAuthor(String intern) {
 		List<Book> list = new ArrayList<>();
 		Book book = null;
-		String sql = "select * from book where author like ?";
+		String sql = "select * from book where author like ? and state = 1";
 		try {
 			conn = JDBCUtils.getConnection();
 			st = conn.prepareStatement(sql);
@@ -231,7 +231,7 @@ public class BookDao {
 	 * */
 	public Book findBookByISBN(String isbn) {
 		Book book = null;
-		String sql = "select * from book where isbn = ?";
+		String sql = "select * from book where isbn = ? ";
 		try {
 			conn = JDBCUtils.getConnection();
 			st = conn.prepareStatement(sql);
@@ -259,7 +259,7 @@ public class BookDao {
 	 */
 	public int update(Book book) {
 
-		String sql = "update book set typeid = ?,bookname=?,author=?,publish = ? ,publishdate = ? ,publishnum=? ,unitprice=? where isbn = ? ";
+		String sql = "update book set typeid = ?,bookname = ?,author=?,publish = ? ,publishdate = ? ,publishnum=? ,unitprice=? ,state = 1 where isbn = ? ";
 		try {
 			conn = JDBCUtils.getConnection();
 			st = conn.prepareStatement(sql);
@@ -286,13 +286,13 @@ public class BookDao {
 	 * 根据ISBN删除书籍
 	 */
 	public int delete(String isbn) {
-		String sql = "delete from book where isbn = ?";
+		String sql = "update book set state = 0 where isbn = ?";
 		try {
 			conn = JDBCUtils.getConnection();
 			st = conn.prepareStatement(sql);
 			st.setString(1, isbn);
 			int row = st.executeUpdate();
-			if (row == 1)
+			if (row != 0)
 				return 1;
 		} catch (SQLException e) {
 			e.printStackTrace();

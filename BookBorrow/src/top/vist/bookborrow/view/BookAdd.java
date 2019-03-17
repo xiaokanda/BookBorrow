@@ -141,7 +141,14 @@ public class BookAdd extends JFrame implements ActionListener, FocusListener {
 
 	@Override
 	public void focusLost(FocusEvent e) {
-
+		if("".equals(ISBNJT.getText()))return ;
+		BookDao bookDao = new BookDao();
+		Book book1 = bookDao.findBookByISBN(ISBNJT.getText());
+		if(book1!=null) {
+			ISBNJT.setText(null);
+			JOptionPane.showMessageDialog(this, "该书籍已经存在,如未有查询到，请在图书信息修改处修改图书信息！");
+			return;
+		}
 	}
 
 	@Override
@@ -149,6 +156,10 @@ public class BookAdd extends JFrame implements ActionListener, FocusListener {
 		if (e.getSource() == addJB) {
 			Book book = new Book();
 			book.setISBN(ISBNJT.getText());
+			if("".equals(book.getISBN())) {
+				JOptionPane.showMessageDialog(this, "ISBN不能为空");
+				return ;
+			}
 			String typename = (String) lbieJCB.getSelectedItem();
 			BookTypeDao bookTypeDao = new BookTypeDao();
 			book.setTypeId(bookTypeDao.findIdByName(typename));
@@ -163,6 +174,7 @@ public class BookAdd extends JFrame implements ActionListener, FocusListener {
 				strDate = format.format(parse);
 			} catch (ParseException e1) {
 				JOptionPane.showMessageDialog(this, "输入日期不合法：yyyy-MM-dd");
+				return ;
 			}
 			book.setStrPublishDate(strDate);
 			try {
@@ -170,9 +182,14 @@ public class BookAdd extends JFrame implements ActionListener, FocusListener {
 				book.setUnitprice(Float.valueOf(vlJT.getText()));
 			} catch (NumberFormatException e1) {
 				JOptionPane.showMessageDialog(this, "最后两项请输入数字");
-				e1.printStackTrace();
+				return ;
 			}
 			BookDao bookDao = new BookDao();
+		/*	Book book1 = bookDao.findBookByISBN(book.getISBN());
+			if(book!=null) {
+				JOptionPane.showMessageDialog(this, "该书籍已经存在,如未有查询到，请在图书信息修改处修改图书信息！");
+				return;
+			}*/
 			int r = bookDao.save(book);
 			if (r == 1) {
 				JOptionPane.showMessageDialog(this, "图书添加成功");
